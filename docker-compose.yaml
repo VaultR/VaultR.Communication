@@ -17,3 +17,11 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+    networks:
+      - vaultr-net
+
+networks:
+  vaultr-net:
+    name: vaultr-net
+    driver: bridge
+    external: true
