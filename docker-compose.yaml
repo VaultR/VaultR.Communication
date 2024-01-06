@@ -1,0 +1,13 @@
+﻿version: '3.8'
+
+services:
+  vaultr-communication:
+    container_name: vaultr-communication
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=dev
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
