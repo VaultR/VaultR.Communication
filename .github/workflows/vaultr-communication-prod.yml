@@ -1,0 +1,58 @@
+name: VaultR COMMUNICATION [PROD]
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+
+  status:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print message
+        run: echo "Building and pushing VaultR Communication image to Docker Hub."
+
+      - name: Print location
+        run: ls -R
+
+  build-and-push:
+
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-flags: --debug
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Substitute node .env file for production
+        run: |
+          touch .env
+          echo "" > .env
+          echo PORT=${{ secrets.PORT }} >> .env
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+          echo MONGO_DB_CONNECTION_STRING=${{ secrets.MONGODB_CONNECTION_STRING_PROD }} >> .env
+          echo MONGO_DB_COLLECTION_NAME=${{ secrets.MONGO_DB_COMMUNICATION_COLLECTION_NAME }} >> .env
+        
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: VaultR.Communication/Dockerfile
+          push: true
+          tags: wmanka/vaultr-communication:latest
