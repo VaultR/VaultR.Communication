@@ -53,6 +53,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: VaultR.Communication/Dockerfile
+          file: Dockerfile
           push: true
           tags: wmanka/vaultr-communication:latest
